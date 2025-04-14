@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="submit-complaint">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Submit New Complaint</h2>
+        <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" id="title" name="title" class="form-control" placeholder="Brief title of your complaint" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input type="text" id="location" name="location" class="form-control" placeholder="Where did this occur?" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select id="category" name="category" class="form-select" required>
+                        <option value="">Select a category</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="5" 
+                            placeholder="Please provide detailed information about your complaint" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label">Supporting Image (Optional)</label>
+                    <input type="file" id="image" name="image" class="form-control" accept="image/*">
+                    <div class="form-text">Upload an image if it helps explain your complaint (max size: 5MB)</div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Submit Complaint
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

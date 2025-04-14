@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="hero-section text-center py-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 mb-3" style="color: #2c3e50; font-weight: 600;">Welcome to CIVIL CARE</h1>
+                <p class="lead mb-4" style="color: #666;">Your platform for efficient civic issue management and resolution. Together, we build a better community.</p>
+                {% if not current_user.is_authenticated %}
+                <div class="cta-buttons">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-user-plus me-2"></i>Register Now
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section mb-5">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-tasks fa-3x" style="color: #3498db;"></i>
+                        </div>
+                        <h3 class="card-title h4 mb-3">Easy Complaint Filing</h3>
+                        <p class="card-text text-muted">Submit and track your civic complaints with our user-friendly interface. Get real-time updates on resolution progress.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-chart-line fa-3x" style="color: #2ecc71;"></i>
+                        </div>
+                        <h3 class="card-title h4 mb-3">Quick Resolution</h3>
+                        <p class="card-text text-muted">Our efficient system ensures your complaints are addressed promptly by the concerned authorities.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-users fa-3x" style="color: #e74c3c;"></i>
+                        </div>
+                        <h3 class="card-title h4 mb-3">Community Driven</h3>
+                        <p class="card-text text-muted">Join our community of active citizens working together to improve our city's infrastructure and services.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="how-it-works-section mb-5">
+        <h2 class="text-center mb-4" style="color: #2c3e50;">How It Works</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="step text-center">
+                    <div class="step-icon mb-3">
+                        <span class="badge rounded-pill bg-primary p-3">
+                            <i class="fas fa-user-plus fa-2x"></i>
+                        </span>
+                    </div>
+                    <h4 class="h5 mb-2">1. Register</h4>
+                    <p class="text-muted small">Create your account in minutes</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step text-center">
+                    <div class="step-icon mb-3">
+                        <span class="badge rounded-pill bg-primary p-3">
+                            <i class="fas fa-edit fa-2x"></i>
+                        </span>
+                    </div>
+                    <h4 class="h5 mb-2">2. Submit Issue</h4>
+                    <p class="text-muted small">File your complaint with details</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step text-center">
+                    <div class="step-icon mb-3">
+                        <span class="badge rounded-pill bg-primary p-3">
+                            <i class="fas fa-clock fa-2x"></i>
+                        </span>
+                    </div>
+                    <h4 class="h5 mb-2">3. Track Progress</h4>
+                    <p class="text-muted small">Monitor the resolution status</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step text-center">
+                    <div class="step-icon mb-3">
+                        <span class="badge rounded-pill bg-primary p-3">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </span>
+                    </div>
+                    <h4 class="h5 mb-2">4. Resolution</h4>
+                    <p class="text-muted small">Get issue resolved efficiently</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section py-5 mb-5" style="background: linear-gradient(135deg, #2c3e50, #3498db); border-radius: 10px; color: white;">
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="fas fa-tasks fa-2x mb-3"></i>
+                    <h3 class="h2 mb-2">100+</h3>
+                    <p class="mb-0">Issues Resolved</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="fas fa-users fa-2x mb-3"></i>
+                    <h3 class="h2 mb-2">500+</h3>
+                    <p class="mb-0">Active Users</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="fas fa-clock fa-2x mb-3"></i>
+                    <h3 class="h2 mb-2">24/7</h3>
+                    <p class="mb-0">Support Available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('{{ url_for("static", filename="images/city-bg.jpg") }}') center/cover;
+        padding: 80px 0;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .feature-icon {
+        transition: transform 0.3s;
+    }
+
+    .card:hover .feature-icon {
+        transform: translateY(-5px);
+    }
+
+    .step-icon .badge {
+        width: 70px;
+        height: 70px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        border: none;
+        transition: transform 0.3s;
+    }
+
+    .step:hover .step-icon .badge {
+        transform: scale(1.1);
+    }
+
+    .stats-section {
+        background-size: 200% 200%;
+        animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .stat-item i {
+        opacity: 0.9;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn-outline-primary {
+        border-width: 2px;
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 40px 0;
+        }
+
+        .display-4 {
+            font-size: 2rem;
+        }
+
+        .lead {
+            font-size: 1rem;
+        }
+
+        .btn-lg {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}

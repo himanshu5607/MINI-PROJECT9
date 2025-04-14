@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-section">
+    <div class="section-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="section-title"><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+                    <p class="section-subtitle">Manage your CIVIL CARE system</p>
+                </div>
+                <div class="header-date">
+                    <i class="fas fa-calendar-alt me-2"></i>{{ now.strftime('%B %d, %Y') }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <!-- Statistics Cards -->
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-card-body">
+                        <div class="stat-card-icon bg-primary">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-card-info">
+                            <h5>Total Complaints</h5>
+                            <h2>{{ complaints|length }}</h2>
+                            <p class="stat-card-desc">Across all categories</p>
+                        </div>
+                    </div>
+                    <div class="stat-card-footer">
+                        <a href="{{ url_for('admin.view_complaints') }}">View details <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-card-body">
+                        <div class="stat-card-icon bg-success">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-card-info">
+                            <h5>Total Users</h5>
+                            <h2>{{ users|length }}</h2>
+                            <p class="stat-card-desc">Registered citizens</p>
+                        </div>
+                    </div>
+                    <div class="stat-card-footer">
+                        <a href="{{ url_for('admin.manage_users') }}">Manage users <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-card-body">
+                        <div class="stat-card-icon bg-warning">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="stat-card-info">
+                            <h5>Total Categories</h5>
+                            <h2>{{ categories|length }}</h2>
+                            <p class="stat-card-desc">Complaint types</p>
+                        </div>
+                    </div>
+                    <div class="stat-card-footer">
+                        <a href="{{ url_for('admin.manage_categories') }}">Manage categories <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mt-2">
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                        <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Recent Complaints</h5>
+                        <a href="{{ url_for('admin.view_complaints') }}" class="btn btn-sm btn-outline-primary">
+                            View All <i class="fas fa-external-link-alt ms-1"></i>
+                        </a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% for complaint in complaints[:5] %}
+                            <div class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1 text-primary">{{ complaint.title }}</h6>
+                                    <small class="text-muted">{{ complaint.created_at.strftime('%Y-%m-%d') }}</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small>Submitted by User #{{ complaint.user_id }}</small>
+                                    <span class="badge {% if complaint.status == 'pending' %}bg-warning{% elif complaint.status == 'in_progress' %}bg-info{% else %}bg-success{% endif %}">
+                                        {{ complaint.status|replace('_', ' ')|title }}
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% if complaints|length == 0 %}
+                            <div class="list-group-item text-center py-4">
+                                <i class="fas fa-inbox fa-2x text-muted mb-2"></i>
+                                <p class="mb-0">No complaints submitted yet</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                        <h5 class="mb-0"><i class="fas fa-folder me-2"></i>Quick Add Category</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('admin.manage_categories') }}">
+                            <div class="mb-3">
+                                <label for="categoryName" class="form-label">Category Name</label>
+                                <input type="text" class="form-control" id="categoryName" name="name" placeholder="e.g., Road Maintenance" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="categoryDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="categoryDescription" name="description" rows="3" placeholder="Brief description of this category"></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-plus-circle me-2"></i>Add Category
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ url_for('admin.manage_categories') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-cog me-1"></i>Manage All Categories
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0"><i class="fas fa-server me-2"></i>System Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="status-indicator bg-success me-3"></div>
+                                    <div>
+                                        <h6 class="mb-0">Database</h6>
+                                        <small class="text-muted">Connected</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="status-indicator bg-success me-3"></div>
+                                    <div>
+                                        <h6 class="mb-0">Web Server</h6>
+                                        <small class="text-muted">Running</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="status-indicator bg-success me-3"></div>
+                                    <div>
+                                        <h6 class="mb-0">Authentication</h6>
+                                        <small class="text-muted">Active</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="status-indicator bg-success me-3"></div>
+                                    <div>
+                                        <h6 class="mb-0">Storage</h6>
+                                        <small class="text-muted">Available</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // View complaint details
+    document.querySelectorAll('.view-complaint').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = document.getElementById('complaintModal');
+            const modalInstance = new bootstrap.Modal(modal);
+            
+            // Get complaint details from data attributes
+            const title = this.getAttribute('data-title');
+            const description = this.getAttribute('data-description');
+            const location = this.getAttribute('data-location');
+            const status = this.getAttribute('data-status');
+            const date = this.getAttribute('data-date');
+            
+            // Update modal content
+            modal.querySelector('.modal-title').textContent = 'Complaint Details #' + this.getAttribute('data-id');
+            document.getElementById('modalComplaintTitle').textContent = title;
+            document.getElementById('modalComplaintDesc').textContent = description;
+            document.getElementById('modalComplaintLoc').textContent = location;
+            document.getElementById('modalComplaintStatus').textContent = status.replace('_', ' ').toUpperCase();
+            document.getElementById('modalComplaintDate').textContent = date;
+            
+            modalInstance.show();
+        });
+    });
+
+    // Update complaint status
+    document.querySelectorAll('.update-status').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const currentStatus = this.getAttribute('data-status');
+            const newStatus = prompt('Enter new status (pending, in_progress, resolved):', currentStatus);
+            
+            if (newStatus && ['pending', 'in_progress', 'resolved'].includes(newStatus)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = "{{ url_for('admin.update_complaint_status', id=0) }}".replace('0', id);
+                
+                const statusInput = document.createElement('input');
+                statusInput.type = 'hidden';
+                statusInput.name = 'status';
+                statusInput.value = newStatus;
+                
+                form.appendChild(statusInput);
+                document.body.appendChild(form);
+                form.submit();
+            } else if (newStatus) {
+                alert('Invalid status. Please use: pending, in_progress, or resolved');
+            }
+        });
+    });
+
+    // Delete complaint
+    document.querySelectorAll('.delete-complaint').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this complaint? This action cannot be undone.')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = "{{ url_for('admin.delete_complaint', id=0) }}".replace('0', id);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    });
+
+    // Quick add category form
+    const quickAddForm = document.querySelector('form[action*="manage_categories"]');
+    if (quickAddForm) {
+        quickAddForm.addEventListener('submit', function(e) {
+            const nameInput = this.querySelector('input[name="name"]');
+            if (!nameInput.value.trim()) {
+                e.preventDefault();
+                alert('Please enter a category name');
+            }
+        });
+    }
+
+    // Search functionality for recent complaints
+    const searchInput = document.getElementById('complaintSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('.list-group-item').forEach(item => {
+                const title = item.querySelector('h6').textContent.toLowerCase();
+                item.style.display = title.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    }
+
+    // Filter complaints by status
+    document.querySelectorAll('.filter-status').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const status = this.getAttribute('data-status');
+            document.querySelectorAll('.list-group-item').forEach(item => {
+                const itemStatus = item.querySelector('.badge').textContent.toLowerCase().replace(' ', '_');
+                if (status === 'all' || itemStatus === status) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-section">
+    <div class="section-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="section-title"><i class="fas fa-users me-2"></i>Manage Users</h2>
+                    <p class="section-subtitle">View and manage registered users</p>
+                </div>
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0"><i class="fas fa-list-alt me-2"></i>All Users</h5>
+                <div class="d-flex gap-2">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
+                            <i class="fas fa-filter me-1"></i>Filter
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item filter-role" href="#" data-role="all">All Users</a></li>
+                            <li><a class="dropdown-item filter-role" href="#" data-role="admin">Admins</a></li>
+                            <li><a class="dropdown-item filter-role" href="#" data-role="user">Regular Users</a></li>
+                        </ul>
+                    </div>
+                    <div class="input-group" style="width: 250px;">
+                        <input type="text" class="form-control" id="userSearch" placeholder="Search users...">
+                        <button class="btn btn-outline-primary" type="button" id="searchButton">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined Date</th>
+                                <th>Complaints</th>
+                                <th class="text-end pe-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td class="ps-3">{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <span class="badge {% if user.is_admin %}bg-primary{% else %}bg-secondary{% endif %}">
+                                        {% if user.is_admin %}Admin{% else %}User{% endif %}
+                                    </span>
+                                </td>
+                                <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    <span class="badge bg-light text-dark">
+                                        {{ user.complaints.count() }} complaints
+                                    </span>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-primary view-user" 
+                                            data-id="{{ user.id }}"
+                                            data-name="{{ user.username|replace('"', '\\"')|replace('\n', '\\n') }}"
+                                            data-email="{{ user.email }}"
+                                            data-is-admin="{{ user.is_admin }}"
+                                            title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        {% if not user.is_admin %}
+                                        <button type="button" class="btn btn-sm btn-warning toggle-admin" 
+                                            data-id="{{ user.id }}"
+                                            data-is-admin="{{ user.is_admin }}"
+                                            title="Toggle Admin Status">
+                                            <i class="fas fa-user-shield"></i>
+                                        </button>
+                                        {% endif %}
+                                        <button type="button" class="btn btn-sm btn-info reset-password" 
+                                            data-id="{{ user.id }}"
+                                            title="Reset Password">
+                                            <i class="fas fa-key"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-danger delete-user" 
+                                            data-id="{{ user.id }}"
+                                            title="Delete User">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- User Details Modal -->
+                            <div class="modal fade" id="userModal{{ user.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                <i class="fas fa-user me-2"></i>User Details
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h6 class="mb-3">User Information</h6>
+                                                    <ul class="list-unstyled">
+                                                        <li class="mb-2">
+                                                            <strong>Username:</strong> {{ user.username }}
+                                                        </li>
+                                                        <li class="mb-2">
+                                                            <strong>Email:</strong> {{ user.email }}
+                                                        </li>
+                                                        <li class="mb-2">
+                                                            <strong>Role:</strong> 
+                                                            <span class="badge {% if user.is_admin %}bg-primary{% else %}bg-secondary{% endif %}">
+                                                                {% if user.is_admin %}Admin{% else %}User{% endif %}
+                                                            </span>
+                                                        </li>
+                                                        <li class="mb-2">
+                                                            <strong>Joined:</strong> {{ user.created_at.strftime('%Y-%m-%d') }}
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h6 class="mb-3">Activity Summary</h6>
+                                                    <ul class="list-unstyled">
+                                                        <li class="mb-2">
+                                                            <strong>Total Complaints:</strong> {{ user.complaints.count() }}
+                                                        </li>
+                                                        <li class="mb-2">
+                                                            <strong>Recent Activity:</strong> 
+                                                            {% set complaints = user.complaints.all() %}
+                                                            {% if complaints %}
+                                                                Last complaint on {{ complaints[-1].created_at.strftime('%Y-%m-%d') }}
+                                                            {% else %}
+                                                                No activity yet
+                                                            {% endif %}
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            {% if not users %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4">
+                                    <div class="empty-state">
+                                        <i class="fas fa-users fa-2x text-muted"></i>
+                                        <p class="mb-0">No users found</p>
+                                        <p class="text-muted">Users will appear here once they register</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filter users by role
+    document.querySelectorAll('.filter-role').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const role = this.getAttribute('data-role');
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const isAdmin = row.querySelector('td:nth-child(4) span').textContent.trim() === 'Admin';
+                if (role === 'all' || 
+                    (role === 'admin' && isAdmin) || 
+                    (role === 'user' && !isAdmin)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('userSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const username = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                row.style.display = (username.includes(searchTerm) || email.includes(searchTerm)) ? '' : 'none';
+            });
+        });
+    }
+
+    // View user details
+    document.querySelectorAll('.view-user').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const modal = document.getElementById('userModal' + id);
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+        });
+    });
+
+    // Toggle admin status
+    document.querySelectorAll('.toggle-admin').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const isAdmin = this.getAttribute('data-is-admin') === 'True';
+            
+            if (confirm(`Are you sure you want to ${isAdmin ? 'remove' : 'grant'} admin privileges for this user?`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = "{{ url_for('admin.toggle_admin', id=0) }}".replace('0', id);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    });
+
+    // Reset password
+    document.querySelectorAll('.reset-password').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            if (confirm('Are you sure you want to reset this user\'s password? They will receive a new temporary password.')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = "{{ url_for('admin.reset_user_password', id=0) }}".replace('0', id);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    });
+
+    // Delete user
+    document.querySelectorAll('.delete-user').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this user? This action cannot be undone and will delete all their complaints.')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = "{{ url_for('admin.delete_user', id=0) }}".replace('0', id);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

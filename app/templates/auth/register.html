@@ -1,0 +1,137 @@
+
+
+
+
+
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header">
+                    <h3 class="text-center font-weight-bold my-4">
+                        {% if is_first_user %}
+                        Create Admin Account
+                        {% else %}
+                        Register New Account
+                        {% endif %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('auth.register') }}" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" required minlength="3" maxlength="64"
+                                    placeholder="Enter a username (3-64 characters)">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="email" required
+                                    placeholder="Enter a valid @gmail.com email">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" required minlength="6"
+                                    placeholder="Password must be at least 6 characters">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                {% if is_first_user %}
+                                Create Admin Account
+                                {% else %}
+                                Register
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-footer text-center py-3">
+                    <div class="small">
+                        Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>
+                    </div>
+                    {% if is_first_user %}
+                    <div class="small mt-2 text-info">
+                        <i class="fas fa-info-circle"></i> This will be the administrator account
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation
+    const form = document.querySelector('form');
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+
+    form.addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        // Validate username
+        const usernameValue = usernameInput.value.trim();
+        if (usernameValue.length < 3 || usernameValue.length > 64) {
+            usernameInput.classList.add('is-invalid');
+            usernameInput.placeholder = " Enter a username (3-64 characters) ";
+            isValid = false;
+        } else {
+            usernameInput.classList.remove('is-invalid');
+        }
+
+        // Validate email
+        const emailValue = emailInput.value.trim();
+        const gmailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+        if (!gmailPattern.test(emailValue)) {
+            emailInput.classList.add('is-invalid');
+            emailInput.placeholder = " Enter a valid @gmail.com email";
+            isValid = false;
+        } else {
+            emailInput.classList.remove('is-invalid');
+        }
+
+        if (!isValid) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
+        form.classList.add('was-validated');
+    });
+
+    // Password visibility toggle
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+    
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
+});
+</script>
+{% endblock %}
+
+
