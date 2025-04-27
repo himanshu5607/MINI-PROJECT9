@@ -38,11 +38,19 @@
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="password" name="password" required minlength="6"
-                                    placeholder="Password must be at least 6 characters">
+                                <input type="password" class="form-control" id="password" name="password" required minlength="8"
+                                    placeholder="Password must be at least 8 characters">
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                            </div>
+                            <!-- Real-time password validation feedback -->
+                            <div id="passwordFeedback" class="mt-2">
+                                <small id="lengthCheck" class="text-danger">• At least 8 characters</small><br>
+                                <small id="uppercaseCheck" class="text-danger">• At least one uppercase letter</small><br>
+                                <small id="lowercaseCheck" class="text-danger">• At least one lowercase letter</small><br>
+                                <small id="numberCheck" class="text-danger">• At least one number</small><br>
+                                <small id="specialCharCheck" class="text-danger">• At least one special character (@$!%*?&)</small>
                             </div>
                         </div>
 
@@ -72,6 +80,7 @@
         </div>
     </div>
 </div>
+
 <!-- OTP Modal Popup -->
 <div id="otpModal" class="modal">
     <div class="modal-content">
@@ -104,7 +113,6 @@
     background-color: rgba(0,0,0,0.5);
 }
 
-/* Modal Content Box */
 #otpModal .modal-content {
     background-color: #fff;
     margin: 10% auto;
@@ -118,7 +126,6 @@
     box-shadow: 0px 5px 20px rgba(0,0,0,0.2);
 }
 
-/* Close Button */
 #otpModal .close {
     position: absolute;
     top: 10px;
@@ -135,12 +142,10 @@
     cursor: pointer;
 }
 
-/* Distance between input and verify button */
 .verify-btn {
     margin-top: 15px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 480px) {
     #otpModal .modal-content {
         width: 90%;
@@ -156,77 +161,132 @@
 </style>
 
 <script>
-// Function to open the OTP Modal
+// OTP Modal Scripts
 function openModal() {
     document.getElementById("otpModal").style.display = "block";
 }
-
-// Function to close the OTP Modal
 function closeModal() {
     document.getElementById("otpModal").style.display = "none";
 }
-
-// Close the modal if the user clicks outside
 window.onclick = function(event) {
     if (event.target == document.getElementById("otpModal")) {
         closeModal();
     }
 }
 </script>
-
 {% endblock %}
 
 {% block scripts %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Form validation
-    const form = document.querySelector('form');
-    const usernameInput = document.getElementById('username');
-    const emailInput = document.getElementById('email');
-
-    form.addEventListener('submit', function(event) {
-        let isValid = true;
-        
-        // Validate username
-        const usernameValue = usernameInput.value.trim();
-        if (usernameValue.length < 3 || usernameValue.length > 64) {
-            usernameInput.classList.add('is-invalid');
-            usernameInput.placeholder = " Enter a username (3-64 characters) ";
-            isValid = false;
-        } else {
-            usernameInput.classList.remove('is-invalid');
-        }
-
-        // Validate email
-        const emailValue = emailInput.value.trim();
-        const gmailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-        if (!gmailPattern.test(emailValue)) {
-            emailInput.classList.add('is-invalid');
-            emailInput.placeholder = " Enter a valid @gmail.com email";
-            isValid = false;
-        } else {
-            emailInput.classList.remove('is-invalid');
-        }
-
-        if (!isValid) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        
-        form.classList.add('was-validated');
-    });
-
-    // Password visibility toggle
-    const passwordInput = document.getElementById('password');
-    const togglePassword = document.getElementById('togglePassword');
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
     
-    togglePassword.addEventListener('click', function() {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        const lengthCheck = document.getElementById('lengthCheck');
+        const uppercaseCheck = document.getElementById('uppercaseCheck');
+        const lowercaseCheck = document.getElementById('lowercaseCheck');
+        const numberCheck = document.getElementById('numberCheck');
+        const specialCharCheck = document.getElementById('specialCharCheck');
+    
+        // Form validation on submit
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+    
+            const usernameValue = usernameInput.value.trim();
+            if (usernameValue.length < 3 || usernameValue.length > 64) {
+                usernameInput.classList.add('is-invalid');
+                usernameInput.placeholder = " Enter a username (3-64 characters) ";
+                isValid = false;
+            } else {
+                usernameInput.classList.remove('is-invalid');
+            }
+    
+            const emailValue = emailInput.value.trim();
+            const gmailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+            if (!gmailPattern.test(emailValue)) {
+                emailInput.classList.add('is-invalid');
+                emailInput.placeholder = " Enter a valid @gmail.com email";
+                isValid = false;
+            } else {
+                emailInput.classList.remove('is-invalid');
+            }
+    
+            const passwordValue = passwordInput.value;
+            const isPasswordValid = 
+                passwordValue.length >= 8 &&
+                /[A-Z]/.test(passwordValue) &&
+                /[a-z]/.test(passwordValue) &&
+                /[0-9]/.test(passwordValue) &&
+                /[@$!%*?&]/.test(passwordValue);
+    
+            if (!isPasswordValid) {
+                passwordInput.classList.add('is-invalid');
+                passwordInput.placeholder = "Password must meet all criteria!";
+                passwordInput.style.color = 'red';
+                isValid = false;
+            } else {
+                passwordInput.classList.remove('is-invalid');
+                passwordInput.style.color = 'black';
+            }
+    
+            if (!isValid) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+    
+            form.classList.add('was-validated');
+        });
+    
+        // Toggle password visibility
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+    
+        // Real-time password validation
+        passwordInput.addEventListener('input', function() {
+            const password = passwordInput.value;
+    
+            // Recalculate on each input
+            const isLengthValid = password.length >= 8;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecialChar = /[@$!%*?&]/.test(password);
+    
+            // Update UI checks
+            updateCheck(lengthCheck, isLengthValid);
+            updateCheck(uppercaseCheck, hasUppercase);
+            updateCheck(lowercaseCheck, hasLowercase);
+            updateCheck(numberCheck, hasNumber);
+            updateCheck(specialCharCheck, hasSpecialChar);
+    
+            // Border color
+            if (isLengthValid && hasUppercase && hasLowercase && hasNumber && hasSpecialChar) {
+                passwordInput.style.borderColor = "green";
+            } else {
+                passwordInput.style.borderColor = "red";
+            }
+    
+            // Reset text color back to black while typing
+            passwordInput.style.color = 'black';
+        });
+    
+        // Utility function
+        function updateCheck(element, condition) {
+            if (condition) {
+                element.classList.remove('text-danger');
+                element.classList.add('text-success');
+            } else {
+                element.classList.add('text-danger');
+                element.classList.remove('text-success');
+            }
+        }
     });
-});
 </script>
+    
 {% endblock %}
-
-
