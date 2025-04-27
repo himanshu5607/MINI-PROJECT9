@@ -18,3 +18,11 @@ class Config:
     PERMANENT_SESSION_LIFETIME = 1800  # 30 minutes
     SESSION_COOKIE_SECURE = False  # Set to True in production
     SESSION_COOKIE_HTTPONLY = True
+    
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = 'ninhash247help@gmail.com'
+    MAIL_PASSWORD = 'okbi yqjn kppl ortf'
+    MAIL_DEFAULT_SENDER = 'ninhash247help@gmail.com'
+    
