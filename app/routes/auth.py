@@ -123,7 +123,7 @@ def register():
             msg = Message('OTP Verification for Your Account', recipients=[email])
             msg.body = f"""
 Hi {username},
-Thank you for registering with Civicare.
+Thank you for registering with Civil Care.
 Your One-Time Password (OTP) for completing your registration is: {otp}
         
 This OTP is valid for 5 minutes.
